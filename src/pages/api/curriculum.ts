@@ -7,49 +7,56 @@ export default function handler(
   res: NextApiResponse<Object>
 ) {
   // the req body has the prompt we will send to OpenAI api
-  const prompt = `Create an instance of the following JSON schema for a learning curriculum.  This curriculum takes a test-driven approach, starting by identifying tests that the students must pass to demonstrate proficiency in some area.
+  const prompt = `Create an instance of the following JSON schema for a learning curriculum.  
+  
+  This curriculum takes a test-driven approach, starting by identifying tests that the students must pass to demonstrate proficiency in some area.
+  The schema allows for fractal nesting of tests, so that a test can be composed of other tests.  This allows for a curriculum to be composed of a series of tests, each of which is composed of a series of tests, and so on.  Please take advantage of this feature.
 
-{
-  "$schema": "http://json-schema.org/draft-07/schema#",
-  "title": "Learning Curriculum for Transformer Neural Networks",
-  "description": "A test-driven approach to learning Transformer neural networks",
-  "type": "object",
-  "properties": {
-      "title": {
-          "type": "string",
-          "description": "The title of the curriculum"
-      },
-      "tests": {
-          "type": "array",
-          "description": "List of tests that students must pass to demonstrate proficiency in Transformer neural networks",
-          "items": {
-              "type": "object",
-              "properties": {
-                  "test_id": {
-                      "type": "string",
-                      "description": "A unique identifier for the test"
-                  },
-                  "test_name": {
-                      "type": "string",
-                      "description": "The name of the test"
-                  },
-                  "description": {
-                      "type": "string",
-                      "description": "A brief description of what the test covers"
-                  },
-                  "passing_criteria": {
-                      "type": "string",
-                      "description": "The criteria that a student must meet to pass the test, expressed in natural language"
-                  }
-              }
-          }
-      }
-  },
-  "required": [
-      "title",
-      "tests"
-  ]
+  {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "Test Driven Curriculum",
+    "type": "object",
+    "properties": {
+        "tests": {
+            "type": "array",
+            "items": {
+                "$ref": "#/definitions/Test"
+            }
+        }
+    },
+    "definitions": {
+        "Test": {
+            "type": "object",
+            "properties": {
+                "test_id": {
+                    "type": "string"
+                },
+                "test_name": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "passing_criteria": {
+                    "type": "string"
+                },
+                "tests": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/Test"
+                    }
+                }
+            },
+            "required": [
+                "test_id",
+                "test_name",
+                "description",
+                "passing_criteria"
+            ]
+        }
+    }
 }
+
 
 Generate an instance of this schema for learning ${req.body.prompt}.`;
 
